@@ -1,0 +1,32 @@
+{
+  "name": "gmail-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP server for Gmail read/delete/mark operations over IMAP and POP3",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts"
+  },
+  "keywords": [
+    "mcp",
+    "gmail",
+    "imap",
+    "pop3"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.18.0",
+    "dotenv": "^17.4.2",
+    "imapflow": "^1.0.191",
+    "mailparser": "^3.7.5",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/mailparser": "^3.4.6",
+    "@types/node": "^22.10.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

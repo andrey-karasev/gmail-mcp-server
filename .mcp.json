@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "gmail": {
+      "command": "node",
+      "args": ["/Users/n653787/Sources/MCP/GMail/dist/index.js"],
+      "cwd": "/Users/n653787/Sources/MCP/GMail",
+      "env": {
+        "GMAIL_USER": "andrey.karasev@gmail.com",
+        "GMAIL_APP_PASSWORD": "kaox rqjo jjko bvqk",
+        "GMAIL_MAILBOX": "INBOX",
+        "GMAIL_HOST_IMAP": "imap.gmail.com",
+        "GMAIL_PORT_IMAP": "993",
+        "GMAIL_HOST_POP3": "pop.gmail.com",
+        "GMAIL_PORT_POP3": "995",
+        "POP3_MARKS_FILE": "./data/pop3-marks.json"
+      }
+    }
+  }
+}
