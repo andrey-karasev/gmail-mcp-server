@@ -297,4 +297,12 @@ export class Pop3EmailClient implements EmailClient {
     }
     await this.writeMarks(marks);
   }
+
+  listFolders(): Promise<string[]> {
+    return Promise.resolve([]);
+  }
+
+  moveEmail(_id: string, _destinationFolder: string): Promise<void> {
+    return Promise.reject(new Error("POP3 does not support folders or moving emails"));
+  }
 }

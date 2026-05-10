@@ -33,4 +33,12 @@ export class GmailService {
   markEmail(id: string, seen: boolean, protocol?: Protocol): Promise<void> {
     return this.getClient(protocol).markEmail(id, seen);
   }
+
+  listFolders(protocol?: Protocol): Promise<string[]> {
+    return this.getClient(protocol).listFolders();
+  }
+
+  moveEmail(id: string, destinationFolder: string, protocol?: Protocol): Promise<void> {
+    return this.getClient(protocol).moveEmail(id, destinationFolder);
+  }
 }

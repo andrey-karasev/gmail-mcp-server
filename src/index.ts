@@ -90,6 +90,34 @@ server.tool(
   }
 );
 
+server.tool(
+  "gmail_list_folders",
+  "List all IMAP mailbox folders",
+  { protocol: protocolSchema },
+  async ({ protocol }) => {
+    const folders = await service.listFolders(protocol);
+    return {
+      content: [{ type: "text", text: JSON.stringify(folders, null, 2) }]
+    };
+  }
+);
+
+server.tool(
+  "gmail_move_email",
+  "Move an email to a specific IMAP folder (creates folder if it does not exist)",
+  {
+    id: z.string().min(1),
+    destinationFolder: z.string().min(1),
+    protocol: protocolSchema
+  },
+  async ({ id, destinationFolder, protocol }) => {
+    await service.moveEmail(id, destinationFolder, protocol);
+    return {
+      content: [{ type: "text", text: JSON.stringify({ ok: true, id, destinationFolder }, null, 2) }]
+    };
+  }
+);
+
 async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);

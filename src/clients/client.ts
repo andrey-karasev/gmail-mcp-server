@@ -5,4 +5,6 @@ export interface EmailClient {
   getEmail(id: string, markAsRead: boolean): Promise<EmailDetail>;
   deleteEmail(id: string): Promise<void>;
   markEmail(id: string, seen: boolean): Promise<void>;
+  listFolders(): Promise<string[]>;
+  moveEmail(id: string, destinationFolder: string): Promise<void>;
 }

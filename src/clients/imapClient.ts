@@ -45,20 +45,31 @@ function addressText(value: unknown): string | undefined {
 export class ImapEmailClient implements EmailClient {
   constructor(private readonly config: GmailConfig) {}
 
-  private async withClient<T>(fn: (client: ImapFlow) => Promise<T>): Promise<T> {
-    const client = new ImapFlow({
+  private createImapFlow(): ImapFlow {
+    return new ImapFlow({
       host: this.config.imap.host,
       port: this.config.imap.port,
       secure: true,
-      auth: {
-        user: this.config.user,
-        pass: this.config.password
-      }
+      auth: { user: this.config.user, pass: this.config.password },
+      logger: false
     });
+  }
 
+  private async withClient<T>(fn: (client: ImapFlow) => Promise<T>): Promise<T> {
+    const client = this.createImapFlow();
     await client.connect();
     try {
       await client.mailboxOpen(this.config.mailbox);
+      return await fn(client);
+    } finally {
+      await client.logout();
+    }
+  }
+
+  private async withRawClient<T>(fn: (client: ImapFlow) => Promise<T>): Promise<T> {
+    const client = this.createImapFlow();
+    await client.connect();
+    try {
       return await fn(client);
     } finally {
       await client.logout();
@@ -188,6 +199,37 @@ export class ImapEmailClient implements EmailClient {
         } else {
           await client.messageFlagsRemove(uid.toString(), ["\\Seen"], { uid: true });
         }
+      } finally {
+        lock.release();
+      }
+    });
+  }
+
+  async listFolders(): Promise<string[]> {
+    return this.withRawClient(async (client) => {
+      const folders = await client.list();
+      return folders
+        .filter((f) => !f.flags.has("\\Noselect"))
+        .map((f) => f.path)
+        .sort();
+    });
+  }
+
+  async moveEmail(id: string, destinationFolder: string): Promise<void> {
+    const uid = Number(id);
+    if (!Number.isInteger(uid) || uid <= 0) {
+      throw new Error(`Invalid IMAP uid: ${id}`);
+    }
+
+    await this.withRawClient(async (client) => {
+      const folders = await client.list();
+      const exists = folders.some((f) => f.path.toLowerCase() === destinationFolder.toLowerCase());
+      if (!exists) {
+        await client.mailboxCreate(destinationFolder);
+      }
+      const lock = await client.getMailboxLock(this.config.mailbox);
+      try {
+        await client.messageMove(uid.toString(), destinationFolder, { uid: true });
       } finally {
         lock.release();
       }
