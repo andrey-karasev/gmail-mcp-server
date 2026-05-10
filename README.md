@@ -16,6 +16,8 @@ MCP tools exposed by this server:
 - `gmail_get_email`
 - `gmail_delete_email`
 - `gmail_mark_email`
+- `gmail_list_folders` (IMAP only)
+- `gmail_move_email` (IMAP only)
 
 ## Requirements
 
@@ -67,9 +69,10 @@ npm run dev
 
 ## Protocol Notes
 
-- IMAP supports server-side read/unread flags and deletion directly.
-- POP3 does not provide standard server-side read/unread flags. This server stores POP3 marks locally in `POP3_MARKS_FILE`.
-- POP3 deletions are performed on the maildrop via `DELE` and committed at `QUIT`.
+- **IMAP**: Supports server-side read/unread flags, deletion, folder listing, and email moving. Folders are Gmail labels.
+- **POP3**: Does not support folders or moving emails. Read/unread marks are stored locally in `POP3_MARKS_FILE`. Deletions are performed on the maildrop via `DELE` and committed at `QUIT`.
+
+**Note:** `gmail_list_folders` and `gmail_move_email` only work with IMAP protocol. POP3 will return empty folder list and reject move operations.
 
 ## MCP Client Example
 
@@ -89,6 +92,13 @@ Example MCP client config entry:
   }
 }
 ```
+
+## Integration with Email Analytics Agent
+
+This server is designed to work with the [Email Analytics Agent](https://github.com/andrey-karasev/email-analytics-agent), which provides:
+- Intelligent email grouping by sender domain
+- Interactive folder assignment
+- Rule learning for automatic email organization
 
 ## Security
 
