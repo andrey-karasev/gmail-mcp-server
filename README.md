@@ -26,7 +26,15 @@ MCP tools exposed by this server:
   - Enable 2FA on Gmail
   - Create an App Password
 
-## Setup
+## Quick install (recommended)
+
+```bash
+npx -y @web4w3/install gmail
+```
+
+No cloning or build step needed. The package is pre-compiled and available on npm as [`@web4w3/install`](https://www.npmjs.com/package/@web4w3/install).
+
+## Setup (build from source)
 
 1. Install dependencies:
 
@@ -82,8 +90,8 @@ Example MCP client config entry:
 {
   "mcpServers": {
     "gmail": {
-      "command": "node",
-      "args": ["/absolute/path/to/GMail/dist/index.js"],
+      "command": "npx",
+      "args": ["-y", "@web4w3/install", "gmail"],
       "env": {
         "GMAIL_USER": "you@gmail.com",
         "GMAIL_APP_PASSWORD": "app_password"
