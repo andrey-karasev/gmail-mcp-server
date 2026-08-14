@@ -10,8 +10,15 @@ jobs:
     steps:
       - name: Dispatch rebuild to Web4w3/install
         run: |
-          curl -s -X POST \
+          http_code=$(curl -s -o response.json -w "%{http_code}" -X POST \
             -H "Authorization: Bearer ${{ secrets.DISPATCH_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/Web4w3/install/dispatches \
-            -d '{"event_type":"rebuild","client_payload":{"mcp":"gmail"}}'
+            -d '{"event_type":"rebuild","client_payload":{"mcp":"gmail"}}')
+
+          cat response.json
+
+          if [ "$http_code" -lt 200 ] || [ "$http_code" -ge 300 ]; then
+            echo "::error::Dispatch to Web4w3/install failed with HTTP $http_code"
+            exit 1
+          fi
